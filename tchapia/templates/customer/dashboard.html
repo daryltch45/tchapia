@@ -82,6 +82,12 @@
                                 <a href="{% url 'base:inbox' %}" class="btn btn-outline-primary btn-lg fw-bold px-4">
                                     <i class="fas fa-envelope me-2"></i>Messagerie
                                 </a>
+                                {% comment %} Show become-handyman only if user has no handyman profile yet {% endcomment %}
+                                {% if not request.user|default_if_none:'' or not request.user.handyman_profile %}
+                                    <a href="{% url 'customer:become_handyman' %}" class="btn btn-outline-dark btn-lg fw-bold px-4">
+                                        <i class="fas fa-briefcase me-2"></i>Devenir Artisan
+                                    </a>
+                                {% endif %}
                             </div>
                     </div>
                 </div>

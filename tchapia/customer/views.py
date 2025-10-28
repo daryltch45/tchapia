@@ -10,6 +10,11 @@ from userauths.models import SERVICE_CHOICES
 
 @login_required
 def post_project_view(request):
+    # Only allow clients or users with both roles to post projects
+    if request.user.user_type not in ['client', 'both']:
+        messages.error(request, "Seuls les clients peuvent publier des projets.")
+        return redirect('base:home')
+
     # Ensure user has customer profile
     customer, created = Customer.objects.get_or_create(user=request.user)
 
@@ -179,7 +184,7 @@ def project_edit_view(request, project_id):
 @login_required
 def profile_edit_view(request):
     # Ensure user is a customer
-    if request.user.user_type != 'client':
+    if request.user.user_type not in ['client', 'both']:
         messages.error(request, "Accès non autorisé. Cette page est réservée aux clients.")
         return redirect('base:home')
 
@@ -248,6 +253,26 @@ def notifications_view(request):
         'unread_notifications_count': unread_notifications_count,
     }
     return render(request, 'customer/notifications.html', context)
+
+
+@login_required
+def become_handyman_view(request):
+    """Allow a client to become a handyman: set user_type to 'both' and create a Handyman profile."""
+    user = request.user
+    # Only allow if user is currently a client or not yet handyman
+    if user.user_type in ['artisan', 'both']:
+        messages.info(request, "Vous avez déjà un profil artisan.")
+        return redirect('customer:dashboard')
+
+    # Update user_type
+    user.user_type = 'both'
+    user.save()
+
+    # Create handyman profile if missing
+    handyman, created = Handyman.objects.get_or_create(user=user)
+
+    messages.success(request, "Votre profil artisan a été créé. Vous pouvez maintenant compléter votre profil artisan.")
+    return redirect('handyman:profile_edit')
 
 
 def notify_handymen(service, project): 

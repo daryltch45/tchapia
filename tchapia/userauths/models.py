@@ -33,6 +33,7 @@ CITIES = [
 USER_TYPE = [
     ('artisan', 'Artisan'),
     ('client', 'Client'),
+    ('both', 'Both'),
 ]
 
 SERVICE_CHOICES = [

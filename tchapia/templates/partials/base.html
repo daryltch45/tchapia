@@ -124,33 +124,64 @@
             {% endif %}
 
             {% if user.is_authenticated %}
-              {% if user.user_type == 'artisan' %}
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'handyman:projects' %}" id="nav-dashboard">
-                  <i class="fas fa-tachometer-alt me-1"></i>Tableau de Bord
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{% url 'handyman:projects_browse' %}" id="nav-projects">
-                  <i class="fas fa-project-diagram me-1"></i>Projets
-                </a>
-              </li>
-              {% elif user.user_type == 'client' %}
-              <li class="nav-item">
-              <a class="nav-link" href="{% url 'base:services_list' %}" id="nav-services">
-                <i class="fas fa-list me-1"></i>Services
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'base:handymen_list' %}" id="nav-artisans">
-                <i class="fas fa-users me-1"></i>Artisans
-              </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'customer:dashboard' %}" id="nav-tableau">
-                  <i class="fas fa-tachometer-alt me-1"></i>Mes Projects
-                </a>
-              </li>
+              {# Prefer session active_profile when set, otherwise fall back to user_type #}
+              {% if request.session.active_profile == 'handyman' %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'handyman:projects' %}" id="nav-dashboard">
+                    <i class="fas fa-tachometer-alt me-1"></i>Tableau de Bord
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'handyman:projects_browse' %}" id="nav-projects">
+                    <i class="fas fa-project-diagram me-1"></i>Projets
+                  </a>
+                </li>
+              {% elif request.session.active_profile == 'customer' %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'base:services_list' %}" id="nav-services">
+                    <i class="fas fa-list me-1"></i>Services
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'base:handymen_list' %}" id="nav-artisans">
+                    <i class="fas fa-users me-1"></i>Artisans
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'customer:dashboard' %}" id="nav-tableau">
+                    <i class="fas fa-tachometer-alt me-1"></i>Mes Projects
+                  </a>
+                </li>
+              {% else %}
+                {% comment %} No session flag: fallback to user_type. Treat 'both' as client by default. {% endcomment %}
+                {% if user.user_type == 'artisan' %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'handyman:projects' %}" id="nav-dashboard">
+                      <i class="fas fa-tachometer-alt me-1"></i>Tableau de Bord
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'handyman:projects_browse' %}" id="nav-projects">
+                      <i class="fas fa-project-diagram me-1"></i>Projets
+                    </a>
+                  </li>
+                {% elif user.user_type == 'client' or user.user_type == 'both' %}
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'base:services_list' %}" id="nav-services">
+                      <i class="fas fa-list me-1"></i>Services
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'base:handymen_list' %}" id="nav-artisans">
+                      <i class="fas fa-users me-1"></i>Artisans
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'customer:dashboard' %}" id="nav-tableau">
+                      <i class="fas fa-tachometer-alt me-1"></i>Mes Projects
+                    </a>
+                  </li>
+                {% endif %}
               {% endif %}
             {% endif %}
           </ul>
@@ -158,6 +189,22 @@
           <!-- User menu -->
           <ul class="navbar-nav">
             {% if user.is_authenticated %}
+            {% if user.user_type == 'both' %}
+            <li class="nav-item dropdown me-2">
+              <a class="nav-link dropdown-toggle" href="#" id="profileSwitch" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-user-cog"></i>
+                {% if request.session.active_profile == 'handyman' %}
+                  <small class="text-muted">Handyman</small>
+                {% else %}
+                  <small class="text-muted">Customer</small>
+                {% endif %}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileSwitch">
+                <li><a class="dropdown-item" href="{% url 'base:switch_to_customer' %}">Switch to Customer</a></li>
+                <li><a class="dropdown-item" href="{% url 'base:switch_to_handyman' %}">Switch to Handyman</a></li>
+              </ul>
+            </li>
+            {% endif %}
             <!-- Notifications -->
             <li class="nav-item dropdown me-3">
               <a

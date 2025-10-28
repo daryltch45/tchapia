@@ -39,6 +39,8 @@ def conversation_view(request, user_id):
 from django.shortcuts import render, get_object_or_404
 from handyman import models as handyman_models
 from userauths.models import REGION_CHOICES, SERVICE_CHOICES, CITIES 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 
 def home_view(request):
 
@@ -130,3 +132,17 @@ def handyman_profile_view(request, handyman_id):
     }
 
     return render(request, "base/handyman_profile.html", context)
+
+
+@login_required
+def switch_to_handyman(request):
+    """Switch current session to handyman view and redirect to handyman dashboard."""
+    request.session['active_profile'] = 'handyman'
+    return redirect('handyman:projects')
+
+
+@login_required
+def switch_to_customer(request):
+    """Switch current session to customer view and redirect to customer dashboard."""
+    request.session['active_profile'] = 'customer'
+    return redirect('customer:dashboard')

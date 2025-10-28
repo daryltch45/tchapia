@@ -22,7 +22,7 @@ def create_customer_notification(customer, notification_type, title, message, pr
 @login_required
 def projects_view(request):
     # Ensure user is a handyman
-    if request.user.user_type != 'artisan':
+    if request.user.user_type not in ['artisan', 'both']:
         messages.error(request, "Accès non autorisé. Cette page est réservée aux artisans.")
         return redirect('base:home')
 
@@ -53,7 +53,7 @@ def projects_view(request):
 @login_required
 def projects_browse_view(request):
     # Ensure user is a handyman
-    if request.user.user_type != 'artisan':
+    if request.user.user_type not in ['artisan', 'both']:
         messages.error(request, "Accès non autorisé. Cette page est réservée aux artisans.")
         return redirect('base:home')
 
@@ -154,7 +154,7 @@ def projects_browse_view(request):
 @login_required
 def profile_edit_view(request):
     # Ensure user is a handyman
-    if request.user.user_type != 'artisan':
+    if request.user.user_type not in ['artisan', 'both']:
         messages.error(request, "Accès non autorisé. Cette page est réservée aux artisans.")
         return redirect('base:home')
 
@@ -203,7 +203,7 @@ def profile_edit_view(request):
 @login_required
 def project_detail_view(request, project_id):
     # Ensure user is a handyman
-    if request.user.user_type != 'artisan':
+    if request.user.user_type not in ['artisan', 'both']:
         messages.error(request, "Accès non autorisé. Cette page est réservée aux artisans.")
         return redirect('base:home')
 
@@ -238,7 +238,7 @@ def project_detail_view(request, project_id):
 @login_required
 def submit_offer_view(request, project_id):
     # Ensure user is a handyman
-    if request.user.user_type != 'artisan':
+    if request.user.user_type not in ['artisan', 'both']:
         messages.error(request, "Accès non autorisé. Cette page est réservée aux artisans.")
         return redirect('base:home')
 
@@ -304,7 +304,7 @@ def submit_offer_view(request, project_id):
 @login_required
 def edit_offer_view(request, project_id):
     # Ensure user is a handyman
-    if request.user.user_type != 'artisan':
+    if request.user.user_type not in ['artisan', 'both']:
         messages.error(request, "Accès non autorisé. Cette page est réservée aux artisans.")
         return redirect('base:home')
 
