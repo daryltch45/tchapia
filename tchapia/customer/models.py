@@ -66,7 +66,6 @@ class Project(models.Model):
 
     @property
     def budget_range(self):
-        # Handle both None and 0 as "no budget specified"
         min_budget = self.budget_min if self.budget_min and self.budget_min > 0 else None
         max_budget = self.budget_max if self.budget_max and self.budget_max > 0 else None
 
@@ -86,6 +85,20 @@ class Project(models.Model):
     class Meta:
         db_table = 'customer_project'
         ordering = ['-created_at']
+
+
+class ProjectImage(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='project_images')
+    image = models.ImageField(upload_to='project_images/', help_text='Images du projet')
+    description = models.CharField(max_length=200, blank=True, null=True, help_text='Description de l\'image')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.project.name} - Image {self.id}"
+
+    class Meta:
+        db_table = 'customer_project_image'
+        ordering = ['uploaded_at']
 
 
 class CustomerNotification(models.Model):
