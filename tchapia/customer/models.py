@@ -66,7 +66,6 @@ class Project(models.Model):
 
     @property
     def budget_range(self):
-        # Handle both None and 0 as "no budget specified"
         min_budget = self.budget_min if self.budget_min and self.budget_min > 0 else None
         max_budget = self.budget_max if self.budget_max and self.budget_max > 0 else None
 
